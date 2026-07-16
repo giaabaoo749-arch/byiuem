@@ -1,80 +1,70 @@
--- Tải thư viện Fluent UI
-local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+-- MẬT KHẨU CỦA BẠN
+local PASSWORD = "zygame_crack" 
+local inputPassword = "zygame_crack" -- Nếu bạn muốn tạo ô nhập, bạn có thể thay biến này bằng input người dùng
 
--- 1. Tạo Cửa Sổ Chính (Window)
-local Window = Fluent:CreateWindow({
-    Title = "BANANA CAT HUB : Blox Trái Ác Quỷ",
-    SubTitle = "",
-    TabWidth = 160,
-    Size = UDim2.fromOffset(580, 460),
-    Acrylic = true, -- Bật hiệu ứng kính mờ giống trong ảnh
-    Theme = "Dark", -- Giao diện tối
-    MinimizeKey = Enum.KeyCode.LeftControl -- Phím thu nhỏ giao diện
-})
+if inputPassword == PASSWORD then
+    -- Nếu đúng mật khẩu, bắt đầu tải GUI
+    local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 
--- 2. Tạo các danh mục bên trái (Tabs) giống hệt thanh Sidebar
-local Tabs = {
-    Farm = Window:AddTab({ Title = "Farm", Icon = "home" }),
-    Config = Window:AddTab({ Title = "Config", Icon = "settings" }),
-    FightingStyle = Window:AddTab({ Title = "Fighting Style", Icon = "swords" }),
-    ItemsFarm = Window:AddTab({ Title = "Items Farm", Icon = "box" }),
-    SuKienBien = Window:AddTab({ Title = "Sự Kiện Biển", Icon = "anchor" }),
-    Mirage = Window:AddTab({ Title = "Mirage + RaceV4", Icon = "moon" }),
-    DragoDojo = Window:AddTab({ Title = "Drago Dojo", Icon = "flame" }),
-    Prehistoric = Window:AddTab({ Title = "Prehistoric", Icon = "bone" }),
-    TapKich = Window:AddTab({ Title = "Tập kích", Icon = "crosshair" }),
-    CombatPVP = Window:AddTab({ Title = "Combat PVP", Icon = "shield" })
-}
+    -- 1. Tạo Cửa Sổ Chính
+    local Window = Fluent:CreateWindow({
+        Title = "BANANA CAT HUB : Blox Trái Ác Quỷ",
+        SubTitle = "by Zygame",
+        TabWidth = 160,
+        Size = UDim2.fromOffset(580, 460),
+        Acrylic = true,
+        Theme = "Dark",
+        MinimizeKey = Enum.KeyCode.RightControl
+    })
 
--- 3. Thêm nội dung vào Tab "Farm"
+    -- 2. Tạo Nút Bật/Tắt (Floating Button) với ảnh Cute Cat
+    local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
+    local ToggleButton = Instance.new("ImageButton", ScreenGui)
+    ToggleButton.Name = "BananaCatButton"
+    ToggleButton.Size = UDim2.new(0, 60, 0, 60)
+    ToggleButton.Position = UDim2.new(0, 20, 0.5, -30)
+    ToggleButton.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    ToggleButton.Image = "rbxassetid://114663536419764"
+    ToggleButton.Active = true
+    ToggleButton.Draggable = true
 
--- Khu vực 1: Farm
-local SectionFarm = Tabs.Farm:AddSection("Farm")
+    local UICorner = Instance.new("UICorner", ToggleButton)
+    UICorner.CornerRadius = UDim.new(0.5, 0)
+    ToggleButton.MouseButton1Click:Connect(function() Window:Minimize() end)
 
-Tabs.Farm:AddToggle("AutoLevel", {
-    Title = "Tự Động Cày Cấp", 
-    Default = false 
-}):OnChanged(function(State)
-    -- Chèn code Auto Level vào đây
-    print("Tự Động Cày Cấp:", State)
-end)
+    -- 3. Tạo các Tabs
+    local Tabs = {
+        Farm = Window:AddTab({ Title = "Farm", Icon = "home" }),
+        Config = Window:AddTab({ Title = "Config", Icon = "settings" }),
+        FightingStyle = Window:AddTab({ Title = "Fighting Style", Icon = "swords" }),
+        ItemsFarm = Window:AddTab({ Title = "Items Farm", Icon = "box" }),
+        SuKienBien = Window:AddTab({ Title = "Sự Kiện Biển", Icon = "anchor" }),
+        Mirage = Window:AddTab({ Title = "Mirage + RaceV4", Icon = "moon" }),
+        DragoDojo = Window:AddTab({ Title = "Drago Dojo", Icon = "flame" }),
+        Prehistoric = Window:AddTab({ Title = "Prehistoric", Icon = "bone" }),
+        TapKich = Window:AddTab({ Title = "Tập kích", Icon = "crosshair" }),
+        CombatPVP = Window:AddTab({ Title = "Combat PVP", Icon = "shield" })
+    }
 
-Tabs.Farm:AddToggle("AutoTravel", {
-    Title = "Tự Động Travel Dressrosa", 
-    Default = false 
-}):OnChanged(function(State)
-    print("Tự Động Travel Dressrosa:", State)
-end)
+    -- 4. Thêm Toggle mẫu
+    Tabs.Farm:AddToggle("AutoLevel", { Title = "Tự Động Cày Cấp", Default = false }):OnChanged(function(State)
+        print("Auto Level:", State)
+    end)
 
-Tabs.Farm:AddToggle("AutoZou", {
-    Title = "Tự Động Zou Nhiệm Vụ", 
-    Default = false 
-}):OnChanged(function(State)
-    print("Tự Động Zou Nhiệm Vụ:", State)
-end)
-
-
--- Khu vực 2: Miscellanea / Nhiệm Vụ
-local SectionMisc = Tabs.Farm:AddSection("Miscellanea / Nhiệm Vụ")
-
-Tabs.Farm:AddToggle("AutoNearest", {
-    Title = "Tự Động Cày Gần Nhất", 
-    Default = false 
-}):OnChanged(function(State)
-    print("Tự Động Cày Gần Nhất:", State)
-end)
-
-Tabs.Farm:AddToggle("AutoFactory", {
-    Title = "Tự Động Factory Raid", 
-    Default = false 
-}):OnChanged(function(State)
-    print("Tự Động Factory Raid:", State)
-end)
-
--- 4. Hoàn tất khởi tạo và tự động mở Tab đầu tiên
-Window:SelectTab(1)
-Fluent:Notify({
-    Title = "BANANA CAT HUB",
-    Content = "Đã tải giao diện thành công!",
-    Duration = 5
-})
+    Window:SelectTab(1)
+    
+    -- Thông báo thành công
+    Fluent:Notify({
+        Title = "BANANA CAT HUB",
+        Content = "Mật khẩu đúng! Đã tải menu.",
+        Duration = 5
+    })
+else
+    -- Nếu sai mật khẩu
+    game:GetService("StarterGui"):SetCore("SendNotification", {
+        Title = "Lỗi",
+        Text = "Mật khẩu không chính xác!",
+        Duration = 5
+    })
+    warn("Mật khẩu không chính xác! Không thể tải Script.")
+end
