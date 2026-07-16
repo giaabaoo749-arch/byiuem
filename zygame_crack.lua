@@ -1,3 +1,4 @@
+-- Zygame_Crack VN
 -- MẬT KHẨU CỦA BẠN
 local PASSWORD = "zygame_crack" 
 local inputPassword = "zygame_crack" -- Nếu bạn muốn tạo ô nhập, bạn có thể thay biến này bằng input người dùng
