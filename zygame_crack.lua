@@ -1,12 +1,18 @@
---Update by Zygame_Crack VN--
+--Zygame_Crack Đã Được Cập Nhật Mới Nhất--
 -- ========================================================
--- ZYGAME_CRACK - UPPDATE NEW
+-- ZYGAME_CRACK - MOI NHAT
 -- ========================================================
-local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
-local CorrectKey = "zygame_crack" -- Mật khẩu của bạn
+game:GetService("StarterGui"):SetCore("SendNotification", {
+    Title = "Zygame_Crack",
+    Text = "Đang khởi động hệ thống...",
+    Duration = 3
+})
 
--- HÀM KHỞI TẠO MENU CHÍNH
-local function InitMenu()
+local PASSWORD = "zygame_crack" 
+local inputPassword = "zygame_crack" 
+
+if inputPassword == PASSWORD then
+    local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
     local Window = Fluent:CreateWindow({
         Title = "Zygame_Crack", 
         SubTitle = "by Zygame", 
@@ -27,7 +33,7 @@ local function InitMenu()
     local TweenService = game:GetService("TweenService"); local VirtualUser = game:GetService("VirtualUser")
     local RunService = game:GetService("RunService"); local VirtualInputManager = game:GetService("VirtualInputManager")
 
-    -- LOGIC HỖ TRỢ (GIỮ NGUYÊN NHƯ CŨ)
+    -- LOGIC HỖ TRỢ
     LocalPlayer.Idled:Connect(function()
         if getgenv().AntiAFK then VirtualUser:CaptureController(); VirtualUser:ClickButton1(Vector2.new(0, 0)) end
     end)
@@ -43,7 +49,17 @@ local function InitMenu()
         end
     end)
 
-    -- VÒNG LẶP AUTO FARM CHÍNH
+    local function EquipWeapon()
+        local char = LocalPlayer.Character
+        if not char then return end
+        local current = char:FindFirstChildOfClass("Tool")
+        if current and current.ToolTip == getgenv().SelectedWeaponType then return end
+        for _, tool in pairs(LocalPlayer.Backpack:GetChildren()) do
+            if tool:IsA("Tool") and tool.ToolTip == getgenv().SelectedWeaponType then char.Humanoid:EquipTool(tool); return end
+        end
+    end
+
+    -- VÒNG LẶP AUTO FARM
     task.spawn(function()
         while true do
             task.wait(0.2)
@@ -78,7 +94,7 @@ local function InitMenu()
                         if dist > 15 then
                             TweenService:Create(hrp, TweenInfo.new(getgenv().TweenSpeed, Enum.EasingStyle.Linear), {CFrame = target.HumanoidRootPart.CFrame * CFrame.new(0, 7, 0)}):Play()
                         else
-                            -- EquipWeapon logic, AutoSkills, AutoAttack...
+                            EquipWeapon(); 
                             if getgenv().AutoSkills then 
                                 for _, k in pairs({"Z","X","C","V"}) do VirtualInputManager:SendKeyEvent(true, k, false, nil); task.wait(0.1); VirtualInputManager:SendKeyEvent(false, k, false, nil) end 
                             end
@@ -91,30 +107,25 @@ local function InitMenu()
         end
     end)
 
-    -- TẠO GIAO DIỆN UI
+    -- TẠO GIAO DIỆN UI CHUYÊN NGHIỆP
     local Tabs = {
         Farm = Window:AddTab({Title = "Farm", Icon = "home"}),
-        Config = Window:AddTab({Title = "Config", Icon = "settings"})
+        Config = Window:AddTab({Title = "Config", Icon = "settings"}),
+        Fighting = Window:AddTab({Title = "Fighting Style", Icon = "swords"}),
+        Items = Window:AddTab({Title = "Items Farm", Icon = "backpack"})
     }
+    
     Tabs.Farm:AddToggle("AutoFarm", {Title = "🚀 Auto Farm", Default = false}):OnChanged(function(S) getgenv().AutoFarm = S end)
+    Tabs.Farm:AddToggle("AutoAttack", {Title = "⚔️ Auto Đánh", Default = false}):OnChanged(function(S) getgenv().AutoAttackEnabled = S end)
+    Tabs.Farm:AddToggle("BringMobs", {Title = "🧲 Gom quái", Default = false}):OnChanged(function(S) getgenv().BringMobs = S end)
+    Tabs.Farm:AddToggle("AutoSkills", {Title = "✨ Auto Chiêu", Default = false}):OnChanged(function(S) getgenv().AutoSkills = S end)
+    Tabs.Farm:AddToggle("AutoHaki", {Title = "🛡️ Auto Haki", Default = false}):OnChanged(function(S) getgenv().AutoHaki = S end)
+    
+    Tabs.Config:AddToggle("AutoReset", {Title = "🔄 Auto Reset khi kẹt", Default = false}):OnChanged(function(S) getgenv().AutoReset = S end)
+    Tabs.Config:AddToggle("AntiAFK", {Title = "🛡️ Chống AFK", Default = false}):OnChanged(function(S) getgenv().AntiAFK = S end)
     Tabs.Config:AddSlider("TweenSpeed", {Title = "Tốc độ bay", Default = 0.5, Min = 0.1, Max = 1.0, Rounding = 1}):OnChanged(function(V) getgenv().TweenSpeed = V end)
 
     Fluent:Notify({Title = "Zygame_Crack", Content = "Hệ thống đã sẵn sàng!", Duration = 5})
+else
+    game:GetService("StarterGui"):SetCore("SendNotification", {Title = "Lỗi", Text = "Sai mật khẩu!", Duration = 5})
 end
-
--- BẢNG NHẬP KEY
-local KeyWindow = Fluent:CreateWindow({Title = "Zygame_Crack | Security", SubTitle = "Nhập Key", Size = UDim2.fromOffset(300, 200), Theme = "Dark"})
-KeyWindow:AddInput("KeyInput", {
-    Title = "Nhập Key:",
-    Default = "",
-    Placeholder = "Nhập mã tại đây...",
-    Callback = function(Value)
-        if Value == CorrectKey then
-            Fluent:Notify({Title = "Thành công", Content = "Key chính xác!", Duration = 3})
-            KeyWindow:Destroy() -- Xóa bảng nhập key
-            InitMenu() -- Khởi chạy menu chính
-        else
-            Fluent:Notify({Title = "Lỗi", Content = "Sai Key!", Duration = 3})
-        end
-    end
-})
