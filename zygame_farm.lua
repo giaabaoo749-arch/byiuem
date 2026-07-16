@@ -1,6 +1,3 @@
--- ========================================================
--- ZYGAME_CRACK - BY GIABAO MOI NHAT
--- ========================================================
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 
 local Window = Fluent:CreateWindow({
