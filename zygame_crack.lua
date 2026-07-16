@@ -1,5 +1,5 @@
 -- ========================================================
--- ZYGAME_CRACK - MOI NHAT
+-- ZYGAME_CRACK - BẢN HOÀN CHỈNH (FULL FEATURES)
 -- ========================================================
 game:GetService("StarterGui"):SetCore("SendNotification", {
     Title = "Zygame_Crack",
@@ -24,39 +24,29 @@ if inputPassword == PASSWORD then
 
     -- CẤU HÌNH BIẾN
     getgenv().AutoFarm = false; getgenv().AutoSkills = false; getgenv().AutoHaki = false; 
-    getgenv().WaterWalk = false; getgenv().BringMobs = false; getgenv().AntiAFK = false;
-    getgenv().AutoAttackEnabled = false; getgenv().AutoReset = false; getgenv().TweenSpeed = 0.5;
-    getgenv().SelectedWeaponType = "Melee"
+    getgenv().BringMobs = false; getgenv().AntiAFK = false; getgenv().AutoAttackEnabled = false;
+    getgenv().AutoReset = false; getgenv().TweenSpeed = 0.5;
+    getgenv().SelectedWeapon = "Melee" 
     
     local Players = game:GetService("Players"); local LocalPlayer = Players.LocalPlayer
     local TweenService = game:GetService("TweenService"); local VirtualUser = game:GetService("VirtualUser")
-    local RunService = game:GetService("RunService"); local VirtualInputManager = game:GetService("VirtualInputManager")
+    local VirtualInputManager = game:GetService("VirtualInputManager")
+
+    -- HÀM EQUIP VŨ KHÍ
+    local function EquipWeapon()
+        local char = LocalPlayer.Character
+        if not char then return end
+        for _, tool in pairs(LocalPlayer.Backpack:GetChildren()) do
+            if tool:IsA("Tool") and string.find(tool.Name, getgenv().SelectedWeapon) then
+                char.Humanoid:EquipTool(tool)
+            end
+        end
+    end
 
     -- LOGIC HỖ TRỢ
     LocalPlayer.Idled:Connect(function()
         if getgenv().AntiAFK then VirtualUser:CaptureController(); VirtualUser:ClickButton1(Vector2.new(0, 0)) end
     end)
-
-    local LastPos = Vector3.new(0,0,0)
-    task.spawn(function()
-        while task.wait(5) do
-            if getgenv().AutoFarm and getgenv().AutoReset and LocalPlayer.Character then
-                local hrp = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-                if hrp and (hrp.Position - LastPos).Magnitude < 2 then LocalPlayer.Character.Humanoid.Health = 0 end
-                if hrp then LastPos = hrp.Position end
-            end
-        end
-    end)
-
-    local function EquipWeapon()
-        local char = LocalPlayer.Character
-        if not char then return end
-        local current = char:FindFirstChildOfClass("Tool")
-        if current and current.ToolTip == getgenv().SelectedWeaponType then return end
-        for _, tool in pairs(LocalPlayer.Backpack:GetChildren()) do
-            if tool:IsA("Tool") and tool.ToolTip == getgenv().SelectedWeaponType then char.Humanoid:EquipTool(tool); return end
-        end
-    end
 
     -- VÒNG LẶP AUTO FARM
     task.spawn(function()
@@ -71,14 +61,19 @@ if inputPassword == PASSWORD then
                         pcall(function() game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("Buso") end)
                     end
 
-                    if getgenv().BringMobs and enemies then
+                    -- GOM QUÁI
+                    if getgenv().BringMobs and enemies and hrp then
                         for _, v in pairs(enemies:GetChildren()) do
-                            if v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health > 0 and (v.HumanoidRootPart.Position - hrp.Position).Magnitude < 60 then 
-                                v.HumanoidRootPart.CFrame = hrp.CFrame * CFrame.new(0, 0, -4) 
+                            local mobHrp = v:FindFirstChild("HumanoidRootPart")
+                            if mobHrp and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 then
+                                if (mobHrp.Position - hrp.Position).Magnitude < 150 then
+                                    mobHrp.CFrame = hrp.CFrame * CFrame.new(0, 0, -3) 
+                                end
                             end
                         end
                     end
 
+                    -- TÌM MỤC TIÊU
                     local target, dist = nil, math.huge
                     if enemies then
                         for _, v in pairs(enemies:GetChildren()) do
@@ -106,12 +101,10 @@ if inputPassword == PASSWORD then
         end
     end)
 
-    -- TẠO GIAO DIỆN UI CHUYÊN NGHIỆP
+    -- TẠO GIAO DIỆN UI
     local Tabs = {
         Farm = Window:AddTab({Title = "Farm", Icon = "home"}),
-        Config = Window:AddTab({Title = "Config", Icon = "settings"}),
-        Fighting = Window:AddTab({Title = "Fighting Style", Icon = "swords"}),
-        Items = Window:AddTab({Title = "Items Farm", Icon = "backpack"})
+        Config = Window:AddTab({Title = "Config", Icon = "settings"})
     }
     
     Tabs.Farm:AddToggle("AutoFarm", {Title = "🚀 Auto Farm", Default = false}):OnChanged(function(S) getgenv().AutoFarm = S end)
@@ -120,6 +113,19 @@ if inputPassword == PASSWORD then
     Tabs.Farm:AddToggle("AutoSkills", {Title = "✨ Auto Chiêu", Default = false}):OnChanged(function(S) getgenv().AutoSkills = S end)
     Tabs.Farm:AddToggle("AutoHaki", {Title = "🛡️ Auto Haki", Default = false}):OnChanged(function(S) getgenv().AutoHaki = S end)
     
+    Tabs.Config:AddDropdown("WeaponSelect", {
+        Title = "Chọn vũ khí",
+        Values = {"Melee", "Fruit", "Sword", "Gun"},
+        Multi = false,
+        Default = 1,
+    }):OnChanged(function(Value) getgenv().SelectedWeapon = Value end)
+
+    Tabs.Config:AddButton({
+        Title = "Ẩn/Hiện Menu",
+        Description = "Nhấn để thu gọn hoặc mở menu (Phím tắt: RightControl)",
+        Callback = function() Window:Minimize() end
+    })
+
     Tabs.Config:AddToggle("AutoReset", {Title = "🔄 Auto Reset khi kẹt", Default = false}):OnChanged(function(S) getgenv().AutoReset = S end)
     Tabs.Config:AddToggle("AntiAFK", {Title = "🛡️ Chống AFK", Default = false}):OnChanged(function(S) getgenv().AntiAFK = S end)
     Tabs.Config:AddSlider("TweenSpeed", {Title = "Tốc độ bay", Default = 0.5, Min = 0.1, Max = 1.0, Rounding = 1}):OnChanged(function(V) getgenv().TweenSpeed = V end)
